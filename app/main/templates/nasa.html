@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <div class="row">
+        <!-- Asteroid ID Search -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Search by Asteroid ID</h5>
+                    <form method="get">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="asteroid_id" placeholder="Enter Asteroid ID">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Range Search -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Search by Date Range</h5>
+                    <form method="get">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" class="form-control" name="start_date" required>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label>End Date (optional)</label>
+                            <input type="date" class="form-control" name="end_date">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if data %}
+        <div class="mt-4">
+            {% if data.error %}
+                <div class="alert alert-danger">{{ data.error }}</div>
+            {% else %}
+                {% if data.name %}
+                    <!-- Single Asteroid Display -->
+                    <h3>Asteroid Details</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>{{ data.name }}</h4>
+                            <p>ID: {{ data.id }}</p>
+                            <p>Potentially Hazardous: {{ data.is_potentially_hazardous_asteroid }}</p>
+                            <p>Estimated Diameter (meters): 
+                                {{ data.estimated_diameter.meters.estimated_diameter_min|floatformat:2 }} - 
+                                {{ data.estimated_diameter.meters.estimated_diameter_max|floatformat:2 }}
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Near Earth Objects Display -->
+                    <h3>Near Earth Objects</h3>
+                    {% for date, objects in data.near_earth_objects.items %}
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5>{{ date }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>ID</th>
+                                                <th>Size (m)</th>
+                                                <th>Hazardous</th>
+                                                <th>Miss Distance (km)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for object in objects %}
+                                                <tr>
+                                                    <td>{{ object.name }}</td>
+                                                    <td>{{ object.id }}</td>
+                                                    <td>
+                                                        {{ object.estimated_diameter.meters.estimated_diameter_min|floatformat:2 }} - 
+                                                        {{ object.estimated_diameter.meters.estimated_diameter_max|floatformat:2 }}
+                                                    </td>
+                                                    <td>{{ object.is_potentially_hazardous_asteroid }}</td>
+                                                    <td>{{ object.close_approach_data.0.miss_distance.kilometers|floatformat:2 }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {% if data.flare %}
+                        <h3>Solar Flares</h3>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Class Type</th>
+                                                <th>Begin Time</th>
+                                                <th>Peak Time</th>
+                                                <th>End Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for flare in data.flare %}
+                                                <tr>
+                                                    <td>{{ flare.classType }}</td>
+                                                    <td>{{ flare.beginTime }}</td>
+                                                    <td>{{ flare.peakTime }}</td>
+                                                    <td>{{ flare.endTime }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
