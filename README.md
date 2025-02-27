@@ -30,3 +30,9 @@ Vous avez hérité d'une application Django qui récupère des données d'astér
 **Soumission:**
 - Soumettez une PR avec vos modifications
 - Incluez une brève explication de votre approche de refactorisation et de vos choix
+
+
+**Env file requit**
+- Il est nécessaire de créer un fichier `.env` à la racine du projet avec les variables d'environnement présentes dans le fichier `sample.env`
+- Pour la clé API de la NASA, vous pouvez en créer une [ici](https://api.nasa.gov/index.html#authentication)
+                                                             
